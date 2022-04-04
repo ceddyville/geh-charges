@@ -36,10 +36,12 @@ namespace GreenEnergyHub.Charges.Tests.Domain.Dtos.ChargeCommands.Validation.Inp
         public void IsValid_WhenCalledWith1PricePoint_ShouldParseValidation(
             int priceCount,
             bool expected,
-            ChargeCommandBuilder chargeCommandBuilder)
+            ChargeOperationDtoBuilder builder)
         {
-            var chargeCommand = CreateCommand(chargeCommandBuilder, ChargeType.Subscription, priceCount);
-            var chargeOperationDto = chargeCommand.Charges.First();
+            var chargeOperationDto = builder
+                .WithChargeType(ChargeType.Subscription)
+                .WithPointWithXNumberOfPrices(priceCount)
+                .Build();
             var sut = new SubscriptionMustHaveSinglePriceRule(chargeOperationDto);
             sut.IsValid.Should().Be(expected);
         }
@@ -49,20 +51,21 @@ namespace GreenEnergyHub.Charges.Tests.Domain.Dtos.ChargeCommands.Validation.Inp
         [InlineAutoMoqData(ChargeType.Unknown)]
         public void IsValid_NeitherFeeOrSubscription_ShouldParseValidation(
             ChargeType chargeType,
-            ChargeCommandBuilder chargeCommandBuilder)
+            ChargeOperationDtoBuilder builder)
         {
-            var chargeCommand = chargeCommandBuilder.WithChargeType(chargeType).Build();
-            var chargeOperationDto = chargeCommand.Charges.First();
+            var chargeOperationDto = builder.WithChargeType(chargeType).Build();
             var sut = new SubscriptionMustHaveSinglePriceRule(chargeOperationDto);
             sut.IsValid.Should().BeTrue();
         }
 
         [Theory]
         [InlineAutoDomainData]
-        public void ValidationRuleIdentifier_ShouldBe_EqualTo(ChargeCommandBuilder chargeCommandBuilder)
+        public void ValidationRuleIdentifier_ShouldBe_EqualTo(ChargeOperationDtoBuilder builder)
         {
-            var chargeCommand = CreateCommand(chargeCommandBuilder, ChargeType.Subscription, 0);
-            var chargeOperationDto = chargeCommand.Charges.First();
+            var chargeOperationDto = builder
+                .WithChargeType(ChargeType.Subscription)
+                .WithPointWithXNumberOfPrices(0)
+                .Build();
             var sut = new SubscriptionMustHaveSinglePriceRule(chargeOperationDto);
             sut.ValidationRuleIdentifier.Should().Be(ValidationRuleIdentifier.SubscriptionMustHaveSinglePrice);
         }

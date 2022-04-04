@@ -30,29 +30,27 @@ namespace GreenEnergyHub.Charges.Tests.Domain.Dtos.ChargeCommands.Validation.Inp
     {
         [Theory]
         [InlineAutoMoqData]
-        public void IsValid_WhenNoEndDateTime_ReturnsTrue(ChargeCommandBuilder chargeCommandBuilder)
+        public void IsValid_WhenNoEndDateTime_ReturnsTrue(ChargeOperationDtoBuilder builder)
         {
-            var chargeCommand = chargeCommandBuilder.WithEndDateTimeAsNull().Build();
-            var chargeOperationDto = chargeCommand.Charges.First();
+            var chargeOperationDto = builder.WithEndDateTimeAsNull().Build();
             var sut = new StopChargeNotYetSupportedValidationRule(chargeOperationDto);
             sut.IsValid.Should().BeTrue();
         }
 
         [Theory]
         [InlineAutoMoqData]
-        public void IsValid_WhenEndDateTimeSet_ReturnsFalse(ChargeCommandBuilder chargeCommandBuilder)
+        public void IsValid_WhenEndDateTimeSet_ReturnsFalse(ChargeOperationDtoBuilder builder)
         {
-            var chargeCommand = chargeCommandBuilder.Build();
-            var chargeOperationDto = chargeCommand.Charges.First();
+            var chargeOperationDto = builder.Build();
             var sut = new StopChargeNotYetSupportedValidationRule(chargeOperationDto);
             sut.IsValid.Should().BeFalse();
         }
 
         [Theory]
         [InlineAutoDomainData]
-        public void ValidationRuleIdentifier_ShouldBe_EqualTo(ChargeCommand chargeCommand)
+        public void ValidationRuleIdentifier_ShouldBe_EqualTo(ChargeOperationDtoBuilder builder)
         {
-            var chargeOperationDto = chargeCommand.Charges.First();
+            var chargeOperationDto = builder.Build();
             var sut = new StopChargeNotYetSupportedValidationRule(chargeOperationDto);
             sut.ValidationRuleIdentifier.Should().Be(ValidationRuleIdentifier.StopChargeNotYetSupported);
         }
