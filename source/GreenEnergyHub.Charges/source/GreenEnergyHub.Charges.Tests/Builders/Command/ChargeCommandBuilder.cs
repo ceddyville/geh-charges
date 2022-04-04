@@ -56,7 +56,7 @@ namespace GreenEnergyHub.Charges.Tests.Builders.Command
             _documentId = "some document id";
             _documentBusinessReasonCode = BusinessReasonCode.UpdateChargeInformation;
             _documentType = DocumentType.RequestUpdateChargeInformation;
-            _sender = new MarketParticipantDto { Id = "0", BusinessProcessRole = MarketParticipantRole.EnergySupplier };
+            _sender = new MarketParticipantDto { Id = "0", BusinessProcessRole = MarketParticipantRole.GridAccessProvider };
             _chargeType = ChargeType.Fee;
             _points = new List<Point>();
             _resolution = Resolution.PT1H;
@@ -193,7 +193,7 @@ namespace GreenEnergyHub.Charges.Tests.Builders.Command
                 CreatedDateTime = SystemClock.Instance.GetCurrentInstant(),
                 Recipient = new MarketParticipantDto
                 {
-                    Id = "0", BusinessProcessRole = MarketParticipantRole.EnergySupplier,
+                    Id = "0", BusinessProcessRole = MarketParticipantRole.GridAccessProvider,
                 },
                 Sender = _sender,
                 BusinessReasonCode = _documentBusinessReasonCode,
