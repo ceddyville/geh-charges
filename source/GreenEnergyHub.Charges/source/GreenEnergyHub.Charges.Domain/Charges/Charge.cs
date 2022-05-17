@@ -87,14 +87,27 @@ namespace GreenEnergyHub.Charges.Domain.Charges
 
         public IReadOnlyCollection<ChargePeriod> Periods => _periods;
 
-        public static ChargeResult CreateCharge(Guid newGuid, string chargeId, Guid ownerId, ChargeType type, Resolution resolution, bool b, List<Point> points, List<ChargePeriod> chargePeriods)
+        public static ChargeResult CreateCharge(
+            Guid newGuid,
+            string chargeId,
+            Guid ownerId,
+            ChargeType type,
+            Resolution resolution,
+            bool taxIndicator,
+            List<Point> points,
+            List<ChargePeriod> chargePeriods)
         {
-            var validationResult = ValidationResult.CreateSuccess();
+            var rules = new List<IValidationRule>
+            {
+            };
 
+            var validationRuleSet = ValidationRuleSet.FromRules(rules);
+
+            var validationResult = validationRuleSet.Validate();
             if (validationResult.IsFailed)
                 return new ChargeResult(validationResult);
 
-            var charge = new Charge(newGuid, chargeId, ownerId, type, resolution, b, points, chargePeriods);
+            var charge = new Charge(newGuid, chargeId, ownerId, type, resolution, taxIndicator, points, chargePeriods);
 
             return new ChargeResult(charge);
         }

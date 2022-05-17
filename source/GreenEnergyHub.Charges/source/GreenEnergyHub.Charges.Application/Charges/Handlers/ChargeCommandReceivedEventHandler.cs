@@ -21,6 +21,7 @@ using GreenEnergyHub.Charges.Application.Persistence;
 using GreenEnergyHub.Charges.Domain.Charges;
 using GreenEnergyHub.Charges.Domain.Dtos.ChargeCommandReceivedEvents;
 using GreenEnergyHub.Charges.Domain.Dtos.ChargeCommands;
+using GreenEnergyHub.Charges.Domain.Dtos.ChargeCommands.Validation.BusinessValidation;
 using GreenEnergyHub.Charges.Domain.Dtos.ChargeCommands.Validation.BusinessValidation.ValidationRules;
 using GreenEnergyHub.Charges.Domain.Dtos.SharedDtos;
 using GreenEnergyHub.Charges.Domain.Dtos.Validation;
@@ -36,6 +37,7 @@ namespace GreenEnergyHub.Charges.Application.Charges.Handlers
         private readonly IChargeFactory _chargeFactory;
         private readonly IChargePeriodFactory _chargePeriodFactory;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IRulesConfigurationRepository _rulesConfigurationRepository;
 
         public ChargeCommandReceivedEventHandler(
             IChargeCommandReceiptService chargeCommandReceiptService,
@@ -44,7 +46,8 @@ namespace GreenEnergyHub.Charges.Application.Charges.Handlers
             IChargeRepository chargeRepository,
             IChargeFactory chargeFactory,
             IChargePeriodFactory chargePeriodFactory,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IRulesConfigurationRepository rulesConfigurationRepository)
         {
             _chargeCommandReceiptService = chargeCommandReceiptService;
             _inputValidator = inputValidator;
@@ -53,6 +56,7 @@ namespace GreenEnergyHub.Charges.Application.Charges.Handlers
             _chargeFactory = chargeFactory;
             _chargePeriodFactory = chargePeriodFactory;
             _unitOfWork = unitOfWork;
+            _rulesConfigurationRepository = rulesConfigurationRepository;
         }
 
         public async Task HandleAsync(ChargeCommandReceivedEvent commandReceivedEvent)
@@ -162,6 +166,7 @@ namespace GreenEnergyHub.Charges.Application.Charges.Handlers
 
         private async Task<ValidationResult> HandleCreateEventAsync(ChargeOperationDto chargeOperationDto)
         {
+            var rulesConfiguration = await _rulesConfigurationRepository.GetConfigurationAsync().ConfigureAwait(false);
             var chargeResult = await _chargeFactory
                 .CreateFromChargeOperationDtoAsync(chargeOperationDto)
                 .ConfigureAwait(false);
