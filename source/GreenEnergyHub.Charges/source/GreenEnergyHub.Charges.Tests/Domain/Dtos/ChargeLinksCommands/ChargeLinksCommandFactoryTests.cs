@@ -60,7 +60,7 @@ namespace GreenEnergyHub.Charges.Tests.Domain.Dtos.ChargeLinksCommands
                 chargeId,
                 meteringPoint.MeteringPointType);
 
-            var charge = new Charge(
+            var chargeResult = Charge.CreateCharge(
                 chargeId,
                 "SenderProvidedId",
                 chargeOwner.Id,
@@ -79,6 +79,7 @@ namespace GreenEnergyHub.Charges.Tests.Domain.Dtos.ChargeLinksCommands
                         SystemClock.Instance.GetCurrentInstant(),
                         Instant.FromUtc(9999, 12, 31, 23, 59, 59)),
                 });
+            var charge = chargeResult.Charge;
 
             chargeRepository
                 .Setup(f => f.GetAsync(new List<Guid> { defaultChargeLink.ChargeId }))

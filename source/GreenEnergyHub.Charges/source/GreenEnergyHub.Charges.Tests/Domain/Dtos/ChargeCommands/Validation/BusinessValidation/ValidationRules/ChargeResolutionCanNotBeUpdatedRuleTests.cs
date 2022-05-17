@@ -27,10 +27,9 @@ namespace GreenEnergyHub.Charges.Tests.Domain.Dtos.ChargeCommands.Validation.Bus
     {
         [Theory]
         [InlineAutoDomainData]
-        public void IsValid_WhenResolutionIsTheSame_ShouldReturnTrue(
-            ChargeOperationDtoBuilder builder,
-            Charge charge)
+        public void IsValid_WhenResolutionIsTheSame_ShouldReturnTrue(ChargeOperationDtoBuilder builder)
         {
+            var charge = new ChargeBuilder().Build();
             var chargeOperationDto = builder.WithResolution(charge.Resolution).Build();
             var sut = new ChargeResolutionCanNotBeUpdatedRule(charge, chargeOperationDto);
             sut.IsValid.Should().BeTrue();
@@ -38,12 +37,11 @@ namespace GreenEnergyHub.Charges.Tests.Domain.Dtos.ChargeCommands.Validation.Bus
 
         [Theory]
         [InlineAutoDomainData]
-        public void IsValid_WhenResolutionIsNotTheSame_ShouldReturnFalse(
-            ChargeOperationDtoBuilder builder,
-            Charge charge)
+        public void IsValid_WhenResolutionIsNotTheSame_ShouldReturnFalse(ChargeOperationDtoBuilder builder)
         {
+            var charge = new ChargeBuilder().Build();
             var chargeOperationDto = builder
-                .WithResolution(charge.Resolution == Resolution.P1D ? Resolution.P1M : Resolution.PT1H)
+                .WithResolution(charge.Resolution == Resolution.P1D ? Resolution.P1M : Resolution.P1D)
                 .Build();
             var sut = new ChargeResolutionCanNotBeUpdatedRule(charge, chargeOperationDto);
             sut.IsValid.Should().BeFalse();

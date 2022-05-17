@@ -22,6 +22,7 @@ using GreenEnergyHub.Charges.Domain.Dtos.ChargeLinksAcceptedEvents;
 using GreenEnergyHub.Charges.Domain.MarketParticipants;
 using GreenEnergyHub.Charges.MessageHub.Models.AvailableChargeLinksData;
 using GreenEnergyHub.Charges.TestCore.Reflection;
+using GreenEnergyHub.Charges.Tests.Builders.Command;
 using GreenEnergyHub.Charges.Tests.Builders.Testables;
 using GreenEnergyHub.TestHelpers;
 using GreenEnergyHub.TestHelpers.FluentAssertionsExtensions;
@@ -43,7 +44,6 @@ namespace GreenEnergyHub.Charges.Tests.MessageHub.Models.AvailableChargeLinksDat
             [Frozen] Mock<IChargeRepository> chargeRepository,
             [Frozen] Mock<IMessageMetaDataContext> messageMetaDataContext,
             ChargeLinksAcceptedEvent acceptedEvent,
-            Charge charge,
             TestGridAccessProvider gridAccessProvider,
             Instant now,
             AvailableChargeLinksDataFactory sut)
@@ -53,7 +53,7 @@ namespace GreenEnergyHub.Charges.Tests.MessageHub.Models.AvailableChargeLinksDat
             marketParticipantRepository
                 .Setup(m => m.GetGridAccessProviderAsync(It.IsAny<string>()))
                 .ReturnsAsync(gridAccessProvider);
-
+            var charge = new ChargeBuilder().Build();
             charge.SetPrivateProperty(c => c.TaxIndicator, true);
             chargeRepository
                 .Setup(r => r.GetAsync(It.IsAny<ChargeIdentifier>()))
@@ -92,7 +92,6 @@ namespace GreenEnergyHub.Charges.Tests.MessageHub.Models.AvailableChargeLinksDat
             [Frozen] Mock<IMarketParticipantRepository> marketParticipantRepository,
             [Frozen] Mock<IChargeRepository> chargeRepository,
             ChargeLinksAcceptedEvent acceptedEvent,
-            Charge charge,
             TestGridAccessProvider gridAccessProvider,
             AvailableChargeLinksDataFactory sut)
         {
@@ -103,7 +102,7 @@ namespace GreenEnergyHub.Charges.Tests.MessageHub.Models.AvailableChargeLinksDat
             marketParticipantRepository
                 .Setup(m => m.GetGridAccessProviderAsync(It.IsAny<string>()))
                 .ReturnsAsync(gridAccessProvider);
-
+            var charge = new ChargeBuilder().Build();
             charge.SetPrivateProperty(c => c.TaxIndicator, false);
             chargeRepository
                 .Setup(r => r.GetAsync(It.IsAny<ChargeIdentifier>()))

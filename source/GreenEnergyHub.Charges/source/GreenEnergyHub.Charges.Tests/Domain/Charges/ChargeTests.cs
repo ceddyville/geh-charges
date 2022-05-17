@@ -155,10 +155,11 @@ namespace GreenEnergyHub.Charges.Tests.Domain.Charges
             actualFirstPeriod.EndDateTime.Should().Be(InstantHelper.GetEndDefault());
         }
 
-        [Theory]
-        [InlineAutoMoqData]
-        public void UpdateCharge_WhenChargePeriodIsNull_ThrowsArgumentNullException(Charge sut)
+        [Fact]
+        public void UpdateCharge_WhenChargePeriodIsNull_ThrowsArgumentNullException()
         {
+            var sut = new ChargeBuilder().Build();
+
             ChargePeriod? chargePeriod = null;
 
             Assert.Throws<ArgumentNullException>(() => sut.Update(chargePeriod!));

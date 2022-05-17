@@ -70,10 +70,10 @@ namespace GreenEnergyHub.Charges.Tests.Domain.Dtos.ChargeCommands.Validation.Doc
             TestMarketParticipant sender,
             [Frozen] Mock<IMarketParticipantRepository> marketParticipantRepository,
             [Frozen] Mock<IChargeRepository> chargeRepository,
-            ChargeCommandDocumentValidationRulesFactory sut,
-            Charge charge)
+            ChargeCommandDocumentValidationRulesFactory sut)
         {
             // Arrange
+            var charge = new ChargeBuilder().Build();
             var chargeOperationDto = new ChargeOperationDtoBuilder().WithChargeType(ChargeType.Fee).Build();
             var chargeCommand = new ChargeCommandBuilder().WithChargeOperation(chargeOperationDto).Build();
             chargeRepository

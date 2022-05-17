@@ -55,7 +55,7 @@ namespace GreenEnergyHub.Charges.Tests.Domain.Charges
             var actual = await sut.CreateFromChargeOperationDtoAsync(chargeOperationDto);
 
             // Assert
-            actual.Should().NotContainNullsOrEmptyEnumerables();
+            actual.Charge.Should().NotContainNullsOrEmptyEnumerables();
         }
 
         [Theory]

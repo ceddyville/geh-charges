@@ -28,6 +28,7 @@ using GreenEnergyHub.Charges.Domain.Dtos.Validation;
 using GreenEnergyHub.Charges.Domain.MarketParticipants;
 using GreenEnergyHub.Charges.Infrastructure.Core.Cim.ValidationErrors;
 using GreenEnergyHub.Charges.MessageHub.Models.Shared;
+using GreenEnergyHub.Charges.TestCore;
 using GreenEnergyHub.Charges.TestCore.Attributes;
 using GreenEnergyHub.Charges.Tests.Builders.Command;
 using GreenEnergyHub.Charges.Tests.Builders.Testables;
@@ -83,10 +84,15 @@ namespace GreenEnergyHub.Charges.Tests.Domain.Dtos.ChargeCommands.Validation.Bus
             [Frozen] Mock<IMarketParticipantRepository> marketParticipantRepository,
             [Frozen] Mock<IChargeRepository> chargeRepository,
             [Frozen] Mock<IRulesConfigurationRepository> rulesConfigurationRepository,
-            ChargeOperationBusinessValidationRulesFactory sut,
-            Charge charge)
+            ChargeOperationBusinessValidationRulesFactory sut)
         {
             // Arrange
+            var period = new ChargePeriodBuilder()
+                .WithStartDateTime(InstantHelper.GetTodayPlusDaysAtMidnightUtc(5))
+                .WithEndDateTime(InstantHelper.GetEndDefault())
+                .Build();
+            var periods = new List<ChargePeriod>() { period };
+            var charge = new ChargeBuilder().WithPeriods(periods).Build();
             var chargeOperationDto = new ChargeOperationDtoBuilder().WithChargeType(ChargeType.Fee).Build();
             SetupConfigureRepositoryMock(rulesConfigurationRepository);
             SetupChargeRepositoryMock(chargeRepository, charge);
@@ -112,10 +118,15 @@ namespace GreenEnergyHub.Charges.Tests.Domain.Dtos.ChargeCommands.Validation.Bus
             [Frozen] Mock<IMarketParticipantRepository> marketParticipantRepository,
             [Frozen] Mock<IChargeRepository> chargeRepository,
             [Frozen] Mock<IRulesConfigurationRepository> rulesConfigurationRepository,
-            ChargeOperationBusinessValidationRulesFactory sut,
-            Charge charge)
+            ChargeOperationBusinessValidationRulesFactory sut)
         {
             // Arrange
+            var period = new ChargePeriodBuilder()
+                .WithStartDateTime(InstantHelper.GetTodayPlusDaysAtMidnightUtc(5))
+                .WithEndDateTime(InstantHelper.GetEndDefault())
+                .Build();
+            var periods = new List<ChargePeriod>() { period };
+            var charge = new ChargeBuilder().WithPeriods(periods).Build();
             var chargeOperationDto = new ChargeOperationDtoBuilder().WithChargeType(ChargeType.Tariff).Build();
             SetupConfigureRepositoryMock(rulesConfigurationRepository);
             SetupChargeRepositoryMock(chargeRepository, charge);
@@ -154,10 +165,15 @@ namespace GreenEnergyHub.Charges.Tests.Domain.Dtos.ChargeCommands.Validation.Bus
             [Frozen] Mock<IRulesConfigurationRepository> rulesConfigurationRepository,
             ChargeOperationBusinessValidationRulesFactory sut,
             TestMarketParticipant sender,
-            ChargeCommand chargeCommand,
-            Charge charge)
+            ChargeCommand chargeCommand)
         {
             // Arrange
+            var period = new ChargePeriodBuilder()
+                .WithStartDateTime(InstantHelper.GetTodayPlusDaysAtMidnightUtc(5))
+                .WithEndDateTime(InstantHelper.GetEndDefault())
+                .Build();
+            var periods = new List<ChargePeriod>() { period };
+            var charge = new ChargeBuilder().WithPeriods(periods).Build();
             SetupConfigureRepositoryMock(rulesConfigurationRepository);
             SetupChargeRepositoryMock(chargeRepository, charge);
             SetupMarketParticipantMock(sender, marketParticipantRepository);

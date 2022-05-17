@@ -68,7 +68,7 @@ namespace GreenEnergyHub.Charges.Tests.Application.Charges.Handlers
                 .Setup(s => s.AcceptAsync(It.IsAny<ChargeCommand>()))
                 .Callback<ChargeCommand>(_ => confirmed = true);
 
-            var charge = chargeBuilder.WithPeriods(new List<ChargePeriod> { CreateValidPeriod() }).Build();
+            var charge = chargeBuilder.WithPeriods(new List<ChargePeriod> { CreateValidPeriod() }).BuildWithChargeResult();
             chargeFactory
                 .Setup(s => s.CreateFromChargeOperationDtoAsync(It.IsAny<ChargeOperationDto>()))
                 .ReturnsAsync(charge);
@@ -97,13 +97,13 @@ namespace GreenEnergyHub.Charges.Tests.Application.Charges.Handlers
             ChargeCommandReceivedEventHandler sut)
         {
             // Arrange
-            var charge = chargeBuilder.Build();
+            var chargeResult = chargeBuilder.Build();
             var validationResult = GetFailedValidationResult();
             SetupValidators(inputValidator, businessValidator, validationResult);
 
             chargeRepository
                 .Setup(r => r.GetOrNullAsync(It.IsAny<ChargeIdentifier>()))
-                .ReturnsAsync(charge);
+                .ReturnsAsync(chargeResult);
 
             var rejected = false;
             receiptService.Setup(s => s.RejectAsync(It.IsAny<ChargeCommand>(), It.IsAny<ValidationResult>()))

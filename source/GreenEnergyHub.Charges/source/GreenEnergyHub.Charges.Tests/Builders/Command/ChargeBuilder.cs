@@ -23,6 +23,11 @@ namespace GreenEnergyHub.Charges.Tests.Builders.Command
     {
         private List<Point> _points = new();
         private List<ChargePeriod> _periods = new();
+        private string _name = "senderProvidedChargeId";
+        private Guid _marketParticipantId = Guid.NewGuid();
+        private ChargeType _chargeType = ChargeType.Tariff;
+        private Resolution _resolution = Resolution.PT1H;
+        private bool _taxIndicator;
 
         public ChargeBuilder WithPoints(IEnumerable<Point> points)
         {
@@ -36,17 +41,62 @@ namespace GreenEnergyHub.Charges.Tests.Builders.Command
             return this;
         }
 
+        public ChargeBuilder WithChargeName(string chargeName)
+        {
+            _name = chargeName;
+            return this;
+        }
+
+        public ChargeBuilder WithMarketParticipantId(Guid marketParticipantId)
+        {
+            _marketParticipantId = marketParticipantId;
+            return this;
+        }
+
+        public ChargeBuilder WithChargeType(ChargeType chargeType)
+        {
+            _chargeType = chargeType;
+            return this;
+        }
+
+        public ChargeBuilder WithResolution(Resolution resolution)
+        {
+            _resolution = resolution;
+            return this;
+        }
+
+        public ChargeBuilder WithTaxIndicator(bool taxIndicator)
+        {
+            _taxIndicator = taxIndicator;
+            return this;
+        }
+
         public Charge Build()
         {
-            return new Charge(
+            var chargeResult = Charge.CreateCharge(
                 Guid.NewGuid(),
-                "senderProvidedChargeId",
-                Guid.NewGuid(),
-                ChargeType.Tariff,
-                Resolution.PT1H,
-                true,
+                _name,
+                _marketParticipantId,
+                _chargeType,
+                _resolution,
+                _taxIndicator,
                 _points,
                 _periods);
+            return chargeResult.Charge;
+        }
+
+        public ChargeResult BuildWithChargeResult()
+        {
+            var chargeResult = Charge.CreateCharge(
+                Guid.NewGuid(),
+                _name,
+                _marketParticipantId,
+                _chargeType,
+                _resolution,
+                _taxIndicator,
+                _points,
+                _periods);
+            return chargeResult;
         }
     }
 }

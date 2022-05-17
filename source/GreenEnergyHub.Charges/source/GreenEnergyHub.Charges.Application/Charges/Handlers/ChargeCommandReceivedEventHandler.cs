@@ -81,6 +81,7 @@ namespace GreenEnergyHub.Charges.Application.Charges.Handlers
                 }
 
                 validationResult = await _businessValidator.ValidateAsync(operation).ConfigureAwait(false);
+
                 if (validationResult.IsFailed)
                 {
                     operationsToBeRejected = operations[i..].ToList();
@@ -100,7 +101,7 @@ namespace GreenEnergyHub.Charges.Application.Charges.Handlers
                      * considered a short-sighted solution.
                      */
                     case OperationType.Create:
-                        await HandleCreateEventAsync(operation).ConfigureAwait(false);
+                        validationResult = await HandleCreateEventAsync(operation).ConfigureAwait(false);
                         await _unitOfWork.SaveChangesAsync().ConfigureAwait(false);
                         break;
                     case OperationType.Update:
@@ -114,6 +115,14 @@ namespace GreenEnergyHub.Charges.Application.Charges.Handlers
                         break;
                     default:
                         throw new InvalidOperationException("Could not handle charge command.");
+                }
+
+                if (validationResult.IsFailed)
+                {
+                    operationsToBeRejected = operations[i..].ToList();
+                    rejectionRules.AddRange(validationResult.InvalidRules);
+                    rejectionRules.AddRange(operationsToBeRejected.Skip(1)
+                        .Select(toBeRejected => new PreviousOperationsMustBeValidRule(operation.Id, toBeRejected)));
                 }
 
                 operationsToBeConfirmed.Add(operation);
@@ -151,13 +160,17 @@ namespace GreenEnergyHub.Charges.Application.Charges.Handlers
             }
         }
 
-        private async Task HandleCreateEventAsync(ChargeOperationDto chargeOperationDto)
+        private async Task<ValidationResult> HandleCreateEventAsync(ChargeOperationDto chargeOperationDto)
         {
-            var charge = await _chargeFactory
+            var chargeResult = await _chargeFactory
                 .CreateFromChargeOperationDtoAsync(chargeOperationDto)
                 .ConfigureAwait(false);
 
-            await _chargeRepository.AddAsync(charge).ConfigureAwait(false);
+            if (chargeResult.ValidationResult.IsFailed)
+                return chargeResult.ValidationResult;
+
+            await _chargeRepository.AddAsync(chargeResult.Charge).ConfigureAwait(false);
+            return ValidationResult.CreateSuccess();
         }
 
         private void HandleUpdateEvent(Charge charge, ChargeOperationDto chargeOperationDto)

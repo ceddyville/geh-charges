@@ -12,13 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Threading.Tasks;
-using GreenEnergyHub.Charges.Domain.Dtos.ChargeCommands;
+using System;
+using GreenEnergyHub.Charges.Domain.Dtos.Validation;
 
 namespace GreenEnergyHub.Charges.Domain.Charges
 {
-    public interface IChargeFactory
+    public class ChargeResult
     {
-        Task<ChargeResult> CreateFromChargeOperationDtoAsync(ChargeOperationDto chargeOperationDto);
+        public ChargeResult(Charge charge)
+        {
+            Charge = charge;
+            ValidationResult = ValidationResult.CreateSuccess();
+        }
+
+        public ChargeResult(ValidationResult validationResult)
+        {
+            ValidationResult = validationResult;
+        }
+
+        private Charge? _charge;
+
+        public ValidationResult ValidationResult { get; set; }
+
+        public Charge Charge
+        {
+            get => _charge ?? throw new InvalidOperationException();
+            private init => _charge = value;
+        }
     }
 }

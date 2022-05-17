@@ -33,7 +33,7 @@ namespace GreenEnergyHub.Charges.Domain.Charges
             _chargePeriodFactory = chargePeriodFactory;
         }
 
-        public async Task<Charge> CreateFromChargeOperationDtoAsync(ChargeOperationDto chargeOperationDto)
+        public async Task<ChargeResult> CreateFromChargeOperationDtoAsync(ChargeOperationDto chargeOperationDto)
         {
             var owner = await _marketParticipantRepository
                 .GetOrNullAsync(chargeOperationDto.ChargeOwner)
@@ -44,7 +44,7 @@ namespace GreenEnergyHub.Charges.Domain.Charges
 
             var period = _chargePeriodFactory.CreateFromChargeOperationDto(chargeOperationDto);
 
-            return new Charge(
+            var chargeResult = Charge.CreateCharge(
                 Guid.NewGuid(),
                 chargeOperationDto.ChargeId,
                 owner.Id,
@@ -53,6 +53,8 @@ namespace GreenEnergyHub.Charges.Domain.Charges
                 chargeOperationDto.TaxIndicator == TaxIndicator.Tax,
                 chargeOperationDto.Points,
                 new List<ChargePeriod> { period });
+
+            return chargeResult;
         }
     }
 }

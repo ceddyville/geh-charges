@@ -17,6 +17,7 @@ using GreenEnergyHub.Charges.Domain.Charges;
 using GreenEnergyHub.Charges.Domain.Dtos.ChargeLinksCommands;
 using GreenEnergyHub.Charges.Domain.Dtos.ChargeLinksCommands.Validation.BusinessValidation.ValidationRules;
 using GreenEnergyHub.Charges.TestCore.Attributes;
+using GreenEnergyHub.Charges.Tests.Builders.Command;
 using GreenEnergyHub.TestHelpers;
 using Xunit;
 using Xunit.Categories;
@@ -28,8 +29,9 @@ namespace GreenEnergyHub.Charges.Tests.Domain.Dtos.ChargeLinksCommands.Validatio
     {
         [Theory]
         [InlineAutoMoqData]
-        public void IsValid_WhenCalledWithMeteringPoint_ReturnsTrue(Charge charge, ChargeLinkDto chargeLinkDto)
+        public void IsValid_WhenCalledWithMeteringPoint_ReturnsTrue(ChargeLinkDto chargeLinkDto)
         {
+            var charge = new ChargeBuilder().Build();
             var sut = new ChargeMustExistRule(charge, chargeLinkDto);
             sut.IsValid.Should().BeTrue();
         }
@@ -44,8 +46,9 @@ namespace GreenEnergyHub.Charges.Tests.Domain.Dtos.ChargeLinksCommands.Validatio
 
         [Theory]
         [InlineAutoDomainData]
-        public void OperationId_ShouldBe_EqualTo(Charge charge, ChargeLinkDto chargeLinkDto)
+        public void OperationId_ShouldBe_EqualTo(ChargeLinkDto chargeLinkDto)
         {
+            var charge = new ChargeBuilder().Build();
             var sut = new ChargeMustExistRule(charge, chargeLinkDto);
             sut.OperationId.Should().Be(chargeLinkDto.OperationId);
         }

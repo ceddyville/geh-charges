@@ -20,6 +20,7 @@ using GreenEnergyHub.Charges.Domain.ChargeLinks;
 using GreenEnergyHub.Charges.Domain.Charges;
 using GreenEnergyHub.Charges.Domain.Dtos.ChargeLinksCommands;
 using GreenEnergyHub.Charges.Domain.MeteringPoints;
+using GreenEnergyHub.Charges.Tests.Builders.Command;
 using GreenEnergyHub.TestHelpers;
 using Moq;
 using Xunit;
@@ -34,13 +35,13 @@ namespace GreenEnergyHub.Charges.Tests.Domain.ChargeLinks
         [InlineAutoDomainData]
         public async Task CreateAsync_WhenCalled_ShouldCreateChargeLinkCorrectly(
             ChargeLinkDto chargeLinkDto,
-            Charge expectedCharge,
             MeteringPoint expectedMeteringPoint,
             [Frozen] Mock<IChargeRepository> chargeRepository,
             [Frozen] Mock<IMeteringPointRepository> meteringPointRepository,
             ChargeLinkFactory sut)
         {
             // Arrange
+            var expectedCharge = new ChargeBuilder().Build();
             chargeRepository
                 .Setup(x => x.GetAsync(It.IsAny<ChargeIdentifier>()))
                 .ReturnsAsync(expectedCharge);

@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GreenEnergyHub.Charges.Core.DateTime;
+using GreenEnergyHub.Charges.Domain.Dtos.Validation;
 using NodaTime;
 
 namespace GreenEnergyHub.Charges.Domain.Charges
@@ -25,7 +26,7 @@ namespace GreenEnergyHub.Charges.Domain.Charges
         private readonly List<Point> _points;
         private readonly List<ChargePeriod> _periods;
 
-        public Charge(
+        private Charge(
             Guid id,
             string senderProvidedChargeId,
             Guid ownerId,
@@ -85,6 +86,18 @@ namespace GreenEnergyHub.Charges.Domain.Charges
         public IReadOnlyCollection<Point> Points => _points;
 
         public IReadOnlyCollection<ChargePeriod> Periods => _periods;
+
+        public static ChargeResult CreateCharge(Guid newGuid, string chargeId, Guid ownerId, ChargeType type, Resolution resolution, bool b, List<Point> points, List<ChargePeriod> chargePeriods)
+        {
+            var validationResult = ValidationResult.CreateSuccess();
+
+            if (validationResult.IsFailed)
+                return new ChargeResult(validationResult);
+
+            var charge = new Charge(newGuid, chargeId, ownerId, type, resolution, b, points, chargePeriods);
+
+            return new ChargeResult(charge);
+        }
 
         /// <summary>
         /// Use this method to update the charge periods timeline of a charge upon receiving a charge update request

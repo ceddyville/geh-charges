@@ -24,6 +24,7 @@ using GreenEnergyHub.Charges.Infrastructure.Persistence.Repositories;
 using GreenEnergyHub.Charges.IntegrationTest.Core.Fixtures.Database;
 using GreenEnergyHub.Charges.TestCore;
 using GreenEnergyHub.Charges.TestCore.Attributes;
+using GreenEnergyHub.Charges.Tests.Builders.Command;
 using Microsoft.EntityFrameworkCore;
 using NodaTime;
 using Xunit;
@@ -160,26 +161,21 @@ namespace GreenEnergyHub.Charges.IntegrationTests.IntegrationTests.Repositories
 
         private static Charge GetValidCharge()
         {
-            var charge = new Charge(
-                Guid.NewGuid(),
-                $"ChgId{Guid.NewGuid().ToString("n")[..5]}",
-                _marketParticipantId,
-                ChargeType.Fee,
-                Resolution.P1D,
-                false,
-                new List<Point> { new(1, 200.111111m, SystemClock.Instance.GetCurrentInstant()) },
-                new List<ChargePeriod>
-                {
-                    new(
-                        Guid.NewGuid(),
-                        "Name",
-                        "description",
-                        VatClassification.Vat25,
-                        true,
-                        Instant.FromDateTimeUtc(DateTime.Now.Date.ToUniversalTime()),
-                        InstantHelper.GetEndDefault()),
-                });
-
+            var points = new List<Point> { new(1, 200.111111m, SystemClock.Instance.GetCurrentInstant()) };
+            var chargePeriods = new List<ChargePeriod>
+            {
+                new(
+                    Guid.NewGuid(),
+                    "Name",
+                    "description",
+                    VatClassification.Vat25,
+                    true,
+                    Instant.FromDateTimeUtc(DateTime.Now.Date.ToUniversalTime()),
+                    InstantHelper.GetEndDefault()),
+            };
+            var charge = new ChargeBuilder().WithChargeName($"ChgId{Guid.NewGuid().ToString("n")[..5]}")
+                .WithMarketParticipantId(_marketParticipantId).WithResolution(Resolution.P1D)
+                .WithChargeType(ChargeType.Fee).WithPoints(points).WithPeriods(chargePeriods).Build();
             return charge;
         }
 
